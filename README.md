@@ -1,0 +1,2 @@
+# Taze
+Bu tazeden barlag
