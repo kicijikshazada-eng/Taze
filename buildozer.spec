@@ -1,7 +1,7 @@
 [app]
 title = Fizrenkli
 package.name = fizrenkli
-package.domain = org.kicijik
+package.domain = org.kicijikshazada
 source.dir = .
 source.main = fizrenkli.py
 version = 0.2
