@@ -24,13 +24,6 @@ jobs:
         sudo apt-get install -y git zip openjdk-17-jdk
         pip install buildozer cython
 
-    - name: Build APK
-      run: |
-        buildozer init
-        sed -i 's/package.name = myapp/package.name = fizrenkli/' buildozer.spec
-        sed -i 's/source.main = main.py/source.main = fizrenkli.py/' buildozer.spec
-        buildozer -v android debug
-
     - name: Check aidl
       run: |
         echo ">>> Aidl gözlenýär..."
