@@ -9,9 +9,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    env:
-      USER: root   # user bilen bagly ýalňyşlygyň öňüni alýar
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
@@ -29,7 +26,22 @@ jobs:
 
     - name: Build APK
       run: |
+        buildozer init
+        sed -i 's/package.name = myapp/package.name = fizrenkli/' buildozer.spec
+        sed -i 's/source.main = main.py/source.main = fizrenkli.py/' buildozer.spec
         buildozer -v android debug
+
+    - name: Check aidl
+      run: |
+        echo ">>> Aidl gözlenýär..."
+        find ~/.buildozer -name aidl || echo "aidl tapylmady"
+        AIDL_PATH=$(find ~/.buildozer -name aidl | head -n 1)
+        if [ -x "$AIDL_PATH" ]; then
+          echo "Aidly tapdym: $AIDL_PATH"
+          "$AIDL_PATH" --version || echo "aidl bar, ýöne --version işlemedi"
+        else
+          echo "Aidly tapyp bilmedim"
+        fi
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
