@@ -9,16 +9,27 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    env:
+      USER: root   # user bilen bagly ýalňyşlygyň öňüni alýar
+
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Build with Buildozer
-      uses: ArtemSBulgakov/buildozer-action@v1
+    - name: Set up Python
+      uses: actions/setup-python@v4
       with:
-        workdir: .
-        buildozer_version: stable
-        command: buildozer -v android debug
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y git zip openjdk-17-jdk
+        pip install buildozer cython
+
+    - name: Build APK
+      run: |
+        buildozer -v android debug
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
