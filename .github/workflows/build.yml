@@ -24,13 +24,24 @@ jobs:
         sudo apt-get install -y git zip openjdk-17-jdk
         pip install buildozer cython
 
-    - name: Accept Android licenses
-      run: |
-        yes | sdkmanager --licenses || true
-
     - name: Build APK
       run: |
-        buildozer android debug
+        buildozer init
+        sed -i 's/package.name = myapp/package.name = fizrenkli/' buildozer.spec
+        sed -i 's/source.main = main.py/source.main = fizrenkli.py/' buildozer.spec
+        buildozer -v android debug
+
+    - name: Check aidl
+      run: |
+        echo ">>> Aidl gözlenýär..."
+        find ~/.buildozer -name aidl || echo "aidl tapylmady"
+        AIDL_PATH=$(find ~/.buildozer -name aidl | head -n 1)
+        if [ -x "$AIDL_PATH" ]; then
+          echo "Aidly tapdym: $AIDL_PATH"
+          "$AIDL_PATH" --version || echo "aidl bar, ýöne --version işlemedi"
+        else
+          echo "Aidly tapyp bilmedim"
+        fi
 
     - name: Find APK
       run: |
