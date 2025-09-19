@@ -24,21 +24,17 @@ jobs:
         sudo apt-get install -y git zip openjdk-17-jdk
         pip install buildozer cython
 
-
-    - name: Check aidl
+    - name: Build APK
       run: |
-        echo ">>> Aidl gözlenýär..."
-        find ~/.buildozer -name aidl || echo "aidl tapylmady"
-        AIDL_PATH=$(find ~/.buildozer -name aidl | head -n 1)
-        if [ -x "$AIDL_PATH" ]; then
-          echo "Aidly tapdym: $AIDL_PATH"
-          "$AIDL_PATH" --version || echo "aidl bar, ýöne --version işlemedi"
-        else
-          echo "Aidly tapyp bilmedim"
-        fi
+        buildozer android debug
+
+    - name: Find APK
+      run: |
+        echo "APK files found:"
+        find . -name "*.apk"
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: fizrenkli-apk
-        path: bin/*.apk
+        path: ./**/**/*.apk
