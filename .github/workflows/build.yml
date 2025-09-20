@@ -27,16 +27,25 @@ jobs:
 
       - name: Install Android SDK tools
         run: |
-          mkdir -p /home/runner/.buildozer/android/platform/android-sdk/cmdline-tools
-          cd /home/runner/.buildozer/android/platform/android-sdk/cmdline-tools
+          mkdir -p $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest
+          cd $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest
           wget https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip -O cmdtools.zip
-          unzip cmdtools.zip -d tools
-          mv tools/cmdline-tools/* tools/
-          yes | tools/bin/sdkmanager --licenses
-          tools/bin/sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
+          unzip cmdtools.zip
+          cd $HOME/.buildozer/android/platform/android-sdk/cmdline-tools
+          mv latest/cmdline-tools latest/tools
+          export ANDROID_SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk
+          export PATH=$ANDROID_SDK_ROOT/cmdline-tools/tools/bin:$PATH
+          yes | $ANDROID_SDK_ROOT/cmdline-tools/tools/bin/sdkmanager --licenses
+          $ANDROID_SDK_ROOT/cmdline-tools/tools/bin/sdkmanager "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+
+      - name: Set buildozer build tools version
+        run: |
+          sed -i 's/^android.build_tools_version =.*$/android.build_tools_version = 34.0.0/' buildozer.spec
 
       - name: Build APK
         run: |
+          export ANDROID_SDK_ROOT=$HOME/.buildozer/android/platform/android-sdk
+          export PATH=$ANDROID_SDK_ROOT/cmdline-tools/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$ANDROID_SDK_ROOT/build-tools/34.0.0:$PATH
           buildozer android debug
           ls -R .
 
